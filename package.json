@@ -1,0 +1,14 @@
+{
+  "name": "hellojs",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter server dev\" \"pnpm --filter client dev\"",
+    "build": "pnpm --filter client build",
+    "start": "node server/src/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

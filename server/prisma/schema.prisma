@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  instructor
+  student
+}
+
+enum MemberRole {
+  instructor
+  student
+}
+
+enum LabType {
+  javascript
+  react
+}
+
+enum LabFormat {
+  problem_solving
+  fix_the_bug
+}
+
+enum SubmissionStatus {
+  passed
+  failed
+  pending
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  name          String
+  role          Role
+  created_at    DateTime @default(now())
+
+  bootcamps_created Bootcamp[]       @relation("BootcampCreator")
+  bootcamp_members  BootcampMember[]
+  bootcamp_labs     BootcampLab[]    @relation("BootcampLabAssigner")
+  lab_submissions   LabSubmission[]
+
+  @@map("users")
+}
+
+model Bootcamp {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  created_by  String
+  created_at  DateTime @default(now())
+
+  creator       User             @relation("BootcampCreator", fields: [created_by], references: [id])
+  members       BootcampMember[]
+  bootcamp_labs BootcampLab[]
+
+  @@map("bootcamps")
+}
+
+model BootcampMember {
+  id          String     @id @default(uuid())
+  bootcamp_id String
+  user_id     String
+  member_role MemberRole
+  joined_at   DateTime   @default(now())
+
+  bootcamp Bootcamp @relation(fields: [bootcamp_id], references: [id])
+  user     User     @relation(fields: [user_id], references: [id])
+
+  @@unique([bootcamp_id, user_id])
+  @@map("bootcamp_members")
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  order_index Int
+  created_at  DateTime @default(now())
+
+  topics Topic[]
+
+  @@map("courses")
+}
+
+model Topic {
+  id          String @id @default(uuid())
+  course_id   String
+  title       String
+  description String
+  order_index Int
+
+  course Course @relation(fields: [course_id], references: [id])
+  labs   Lab[]
+
+  @@map("topics")
+}
+
+model Lab {
+  id            String    @id @default(uuid())
+  topic_id      String
+  title         String
+  concept_md    String
+  starter_code  String
+  solution_code String
+  order_index   Int
+  lab_type      LabType
+  lab_format    LabFormat
+  created_at    DateTime  @default(now())
+
+  topic           Topic           @relation(fields: [topic_id], references: [id])
+  test_cases      TestCase[]
+  bootcamp_labs   BootcampLab[]
+  lab_submissions LabSubmission[]
+
+  @@map("labs")
+}
+
+model TestCase {
+  id          String @id @default(uuid())
+  lab_id      String
+  description String
+  test_code   String
+  order_index Int
+
+  lab Lab @relation(fields: [lab_id], references: [id])
+
+  @@map("test_cases")
+}
+
+model BootcampLab {
+  id          String   @id @default(uuid())
+  bootcamp_id String
+  lab_id      String
+  assigned_by String
+  assigned_at DateTime @default(now())
+
+  bootcamp Bootcamp @relation(fields: [bootcamp_id], references: [id])
+  lab      Lab      @relation(fields: [lab_id], references: [id])
+  assigner User     @relation("BootcampLabAssigner", fields: [assigned_by], references: [id])
+
+  @@unique([bootcamp_id, lab_id])
+  @@map("bootcamp_labs")
+}
+
+model LabSubmission {
+  id           String           @id @default(uuid())
+  user_id      String
+  lab_id       String
+  code         String
+  status       SubmissionStatus
+  tests_passed Int
+  tests_total  Int
+  submitted_at DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+  lab  Lab  @relation(fields: [lab_id], references: [id])
+
+  @@unique([user_id, lab_id])
+  @@map("lab_submissions")
+}
