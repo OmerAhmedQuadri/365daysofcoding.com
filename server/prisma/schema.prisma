@@ -167,3 +167,18 @@ model LabSubmission {
   @@unique([user_id, lab_id])
   @@map("lab_submissions")
 }
+
+// Sign-ups waiting for their emailed code. The users row is created only after the code is
+// verified, so an unverified sign-up never claims an email address. A resend replaces the row.
+model PendingRegistration {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  password_hash String
+  code_hash     String
+  attempts      Int      @default(0)
+  expires_at    DateTime
+  sent_at       DateTime @default(now())
+
+  @@map("pending_registrations")
+}
