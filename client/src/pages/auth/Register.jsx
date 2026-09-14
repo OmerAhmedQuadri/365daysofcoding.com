@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { register as apiRegister } from '../../api/auth.js';
 import useAuth from '../../hooks/useAuth.js';
+import Brand from '../../components/shared/Brand.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -38,6 +39,10 @@ export default function Register() {
         transition={{ duration: 0.3, ease: 'easeOut' }}
         className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8"
       >
+        <div className="mb-6">
+          <Brand />
+        </div>
+
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create account</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">

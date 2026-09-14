@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth.js';
+import Brand from './Brand.jsx';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
     <nav className="h-14 border-b border-gray-200 bg-white flex items-center px-6 gap-4">
-      <Link to="/" className="font-semibold text-indigo-600 text-lg tracking-tight">
-        365daysofcoding.com
+      <Link to="/">
+        <Brand />
       </Link>
       <div className="flex-1" />
       <span className="text-sm text-gray-600">{user?.name}</span>
