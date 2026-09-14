@@ -28,25 +28,25 @@ export default function CoursePage() {
   }, [id]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
-        <Link to="/" className="text-sm text-indigo-600 hover:underline">
+        <Link to="/" className="text-sm text-brand-400 hover:underline">
           ← All courses
         </Link>
 
         {loading ? (
           <div className="mt-6 space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-20 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-20 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : (
           <>
             <div className="mt-4 mb-8">
-              <h1 className="text-2xl font-semibold text-gray-900">{course?.title}</h1>
+              <h1 className="text-2xl font-semibold text-fg">{course?.title}</h1>
               {course?.description && (
-                <p className="mt-1 text-sm text-gray-500">{course.description}</p>
+                <p className="mt-1 text-sm text-fg-muted">{course.description}</p>
               )}
             </div>
 

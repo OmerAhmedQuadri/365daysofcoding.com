@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 function PassIcon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0 text-green-500">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0 text-green-400">
       <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
     </svg>
   );
@@ -25,7 +25,7 @@ export default function TestResults({ results }) {
 
   return (
     <div className="px-4 py-3">
-      <p className={`text-xs font-semibold mb-2 ${allPassed ? 'text-green-600' : 'text-gray-500'}`}>
+      <p className={`text-xs font-semibold mb-2 ${allPassed ? 'text-green-400' : 'text-fg-muted'}`}>
         {passed}/{total} tests passing
       </p>
 
@@ -38,15 +38,15 @@ export default function TestResults({ results }) {
             transition={{ type: 'spring', stiffness: 380, damping: 26, delay: i * 0.05 }}
             className={`flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm ${
               result.passed
-                ? 'bg-green-50 text-green-800'
-                : 'bg-red-50 text-red-800'
+                ? 'bg-green-500/10 text-green-300'
+                : 'bg-red-500/10 text-red-300'
             }`}
           >
             {result.passed ? <PassIcon /> : <FailIcon />}
             <div className="min-w-0">
               <p className="font-medium leading-snug">{result.description}</p>
               {!result.passed && result.error && (
-                <p className="mt-0.5 text-xs text-red-600 font-mono break-all">{result.error}</p>
+                <p className="mt-0.5 text-xs text-red-400 font-mono break-all">{result.error}</p>
               )}
             </div>
           </motion.div>

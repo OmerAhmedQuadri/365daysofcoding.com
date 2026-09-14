@@ -22,6 +22,13 @@ export async function login(data) {
   return json.data;
 }
 
+export async function demoLogin() {
+  const res = await fetch(`${BASE}/demo`, { method: 'POST' });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Could not start the demo');
+  return json.data;
+}
+
 export async function getMe(token) {
   const res = await fetch(`${BASE}/me`, {
     headers: { Authorization: `Bearer ${token}` },

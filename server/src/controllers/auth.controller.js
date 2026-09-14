@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import { sign } from '../lib/jwt.js';
+import { getDemoEmail, isDemoUser } from '../lib/demo.js';
 
 export async function register(req, res, next) {
   try {
@@ -62,6 +63,29 @@ export async function login(req, res, next) {
   }
 }
 
+export async function demoLogin(req, res, next) {
+  try {
+    const email = getDemoEmail();
+    const user = email ? await prisma.user.findUnique({ where: { email } }) : null;
+
+    // Only ever hand out a student account, even if DEMO_USER_EMAIL points elsewhere
+    if (!user || user.role !== 'student') {
+      return res.status(404).json({ error: 'Demo account is not available' });
+    }
+
+    const token = sign({ id: user.id, email: user.email, role: user.role });
+
+    res.json({
+      data: {
+        token,
+        user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function me(req, res, next) {
   try {
     const user = await prisma.user.findUnique({
@@ -73,7 +97,7 @@ export async function me(req, res, next) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ data: user });
+    res.json({ data: { ...user, is_demo: isDemoUser(user) } });
   } catch (err) {
     next(err);
   }

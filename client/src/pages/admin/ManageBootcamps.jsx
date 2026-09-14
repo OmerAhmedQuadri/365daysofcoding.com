@@ -15,15 +15,15 @@ import Navbar from '../../components/shared/Navbar.jsx';
 function Msg({ msg }) {
   if (!msg) return null;
   return (
-    <p className={`text-xs mt-2 ${msg.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+    <p className={`text-xs mt-2 ${msg.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
       {msg.text}
     </p>
   );
 }
 
 const ROLE_STYLE = {
-  instructor: 'bg-purple-50 text-purple-700 border-purple-200',
-  student:    'bg-blue-50 text-blue-700 border-blue-200',
+  instructor: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
+  student:    'bg-blue-500/10 text-blue-300 border-blue-500/30',
 };
 
 export default function ManageBootcamps() {
@@ -171,19 +171,19 @@ export default function ManageBootcamps() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
 
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <Link to="/admin" className="text-xs text-indigo-600 hover:underline">← Admin</Link>
-            <h1 className="text-2xl font-semibold text-gray-900 mt-1">Bootcamps</h1>
+            <Link to="/admin" className="text-xs text-brand-400 hover:underline">← Admin</Link>
+            <h1 className="text-2xl font-semibold text-fg mt-1">Bootcamps</h1>
           </div>
           {!showCreate && (
             <button
               onClick={() => setShowCreate(true)}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 text-brand-950 transition-colors"
             >
               + New Bootcamp
             </button>
@@ -196,26 +196,26 @@ export default function ManageBootcamps() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.18 }}
-            className="mb-6 rounded-xl border border-indigo-200 bg-white p-5"
+            className="mb-6 rounded-xl border border-brand-500/30 bg-surface p-5"
           >
-            <h2 className="text-sm font-semibold text-gray-800 mb-4">New Bootcamp</h2>
+            <h2 className="text-sm font-semibold text-fg mb-4">New Bootcamp</h2>
             <form onSubmit={handleCreateBootcamp} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Name</label>
+                <label className="block text-xs font-medium text-fg-muted mb-1">Name</label>
                 <input
                   value={createForm.name}
                   onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))}
                   required
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                   placeholder="e.g. Summer 2025 Cohort"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                <label className="block text-xs font-medium text-fg-muted mb-1">Description</label>
                 <input
                   value={createForm.description}
                   onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                   placeholder="Optional description"
                 />
               </div>
@@ -223,14 +223,14 @@ export default function ManageBootcamps() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
                 >
                   {creating ? 'Creating…' : 'Create'}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowCreate(false); setCreateForm({ name: '', description: '' }); }}
-                  className="px-4 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-800 transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm text-fg-muted hover:text-fg transition-colors"
                 >
                   Cancel
                 </button>
@@ -243,10 +243,10 @@ export default function ManageBootcamps() {
         {/* List */}
         {loading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-xl bg-gray-200 animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-xl bg-line animate-pulse" />)}
           </div>
         ) : bootcamps.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-10">No bootcamps yet.</p>
+          <p className="text-sm text-fg-subtle text-center py-10">No bootcamps yet.</p>
         ) : (
           <motion.div
             className="space-y-3"
@@ -258,25 +258,25 @@ export default function ManageBootcamps() {
               <motion.div
                 key={bc.id}
                 variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.2 } } }}
-                className={`rounded-xl border bg-white overflow-hidden transition-colors ${selectedId === bc.id ? 'border-indigo-300' : 'border-gray-200'}`}
+                className={`rounded-xl border bg-surface overflow-hidden transition-colors ${selectedId === bc.id ? 'border-brand-500/50' : 'border-line'}`}
               >
                 {/* Bootcamp header row */}
                 <div className="flex items-center gap-3 px-4 py-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{bc.name}</p>
+                    <p className="text-sm font-medium text-fg">{bc.name}</p>
                     {bc.description && (
-                      <p className="text-xs text-gray-400 truncate">{bc.description}</p>
+                      <p className="text-xs text-fg-subtle truncate">{bc.description}</p>
                     )}
                   </div>
-                  <span className="shrink-0 text-xs text-gray-400 tabular-nums">
+                  <span className="shrink-0 text-xs text-fg-subtle tabular-nums">
                     {bc.member_count} member{bc.member_count !== 1 ? 's' : ''}
                   </span>
                   <button
                     onClick={() => handleSelectBootcamp(bc.id)}
                     className={`shrink-0 text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors ${
                       selectedId === bc.id
-                        ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                        : 'border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-700'
+                        ? 'border-brand-500/50 bg-brand-500/10 text-brand-300'
+                        : 'border-line text-fg-muted hover:border-brand-500/50 hover:text-brand-300'
                     }`}
                   >
                     {selectedId === bc.id ? 'Close ✕' : 'Manage ▼'}
@@ -293,41 +293,41 @@ export default function ManageBootcamps() {
                       transition={{ duration: 0.22 }}
                       className="overflow-hidden"
                     >
-                      <div className="border-t border-gray-100 px-4 py-4 space-y-5">
+                      <div className="border-t border-line px-4 py-4 space-y-5">
 
                         {panelMsg && (
-                          <div className={`rounded-lg px-3 py-2 text-xs border ${panelMsg.type === 'error' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
+                          <div className={`rounded-lg px-3 py-2 text-xs border ${panelMsg.type === 'error' ? 'bg-red-500/10 text-red-300 border-red-500/30' : 'bg-green-500/10 text-green-300 border-green-500/30'}`}>
                             {panelMsg.text}
                           </div>
                         )}
 
                         {detailLoading ? (
                           <div className="space-y-2">
-                            {[1, 2].map(i => <div key={i} className="h-8 rounded-lg bg-gray-100 animate-pulse" />)}
+                            {[1, 2].map(i => <div key={i} className="h-8 rounded-lg bg-raised animate-pulse" />)}
                           </div>
                         ) : detail ? (
                           <>
                             {/* Members */}
                             <section>
-                              <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wide mb-2">
                                 Members ({detail.members.length})
                               </h3>
                               <div className="space-y-1.5 mb-3">
                                 {detail.members.length === 0 ? (
-                                  <p className="text-xs text-gray-400">No members yet.</p>
+                                  <p className="text-xs text-fg-subtle">No members yet.</p>
                                 ) : (
                                   detail.members.map(m => (
                                     <div key={m.user_id} className="flex items-center gap-2 text-sm">
                                       <span className="flex-1 min-w-0">
-                                        <span className="font-medium text-gray-800">{m.user.name}</span>
-                                        <span className="text-gray-400 ml-1.5 text-xs">{m.user.email}</span>
+                                        <span className="font-medium text-fg">{m.user.name}</span>
+                                        <span className="text-fg-subtle ml-1.5 text-xs">{m.user.email}</span>
                                       </span>
                                       <span className={`shrink-0 text-xs font-medium border rounded-full px-2 py-0.5 ${ROLE_STYLE[m.member_role]}`}>
                                         {m.member_role}
                                       </span>
                                       <button
                                         onClick={() => handleRemoveMember(m.user_id)}
-                                        className="shrink-0 text-xs text-red-500 hover:text-red-700 transition-colors"
+                                        className="shrink-0 text-xs text-red-400 hover:text-red-300 transition-colors"
                                       >
                                         Remove
                                       </button>
@@ -343,12 +343,12 @@ export default function ManageBootcamps() {
                                   onChange={e => setMemberForm(f => ({ ...f, email: e.target.value }))}
                                   required
                                   placeholder="student@example.com"
-                                  className="flex-1 min-w-0 rounded-lg border border-gray-200 px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-400"
+                                  className="flex-1 min-w-0 rounded-lg border border-line px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500"
                                 />
                                 <select
                                   value={memberForm.member_role}
                                   onChange={e => setMemberForm(f => ({ ...f, member_role: e.target.value }))}
-                                  className="rounded-lg border border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:border-indigo-400"
+                                  className="rounded-lg border border-line px-2 py-1.5 text-xs focus:outline-none focus:border-brand-500"
                                 >
                                   <option value="student">Student</option>
                                   <option value="instructor">Instructor</option>
@@ -356,7 +356,7 @@ export default function ManageBootcamps() {
                                 <button
                                   type="submit"
                                   disabled={addingMember}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
                                 >
                                   {addingMember ? '…' : 'Add'}
                                 </button>
@@ -365,24 +365,24 @@ export default function ManageBootcamps() {
 
                             {/* Assigned Labs */}
                             <section>
-                              <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+                              <h3 className="text-xs font-semibold text-fg-muted uppercase tracking-wide mb-2">
                                 Assigned Labs ({detail.bootcamp_labs.length})
                               </h3>
                               <div className="space-y-1.5 mb-3">
                                 {detail.bootcamp_labs.length === 0 ? (
-                                  <p className="text-xs text-gray-400">No labs assigned yet.</p>
+                                  <p className="text-xs text-fg-subtle">No labs assigned yet.</p>
                                 ) : (
                                   detail.bootcamp_labs.map(bl => (
                                     <div key={bl.lab_id} className="flex items-center gap-2 text-sm">
-                                      <span className="flex-1 min-w-0 text-gray-800 text-xs truncate">
+                                      <span className="flex-1 min-w-0 text-fg text-xs truncate">
                                         {bl.lab.title}
                                       </span>
-                                      <span className="shrink-0 text-xs text-gray-400 font-mono">
+                                      <span className="shrink-0 text-xs text-fg-subtle font-mono">
                                         {bl.lab_id.slice(0, 8)}…
                                       </span>
                                       <button
                                         onClick={() => handleRemoveLab(bl.lab_id)}
-                                        className="shrink-0 text-xs text-red-500 hover:text-red-700 transition-colors"
+                                        className="shrink-0 text-xs text-red-400 hover:text-red-300 transition-colors"
                                       >
                                         Remove
                                       </button>
@@ -397,12 +397,12 @@ export default function ManageBootcamps() {
                                   onChange={e => setLabIdInput(e.target.value)}
                                   required
                                   placeholder="Paste lab UUID"
-                                  className="flex-1 min-w-0 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-indigo-400"
+                                  className="flex-1 min-w-0 rounded-lg border border-line px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-brand-500"
                                 />
                                 <button
                                   type="submit"
                                   disabled={assigningLab}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
                                 >
                                   {assigningLab ? '…' : 'Assign'}
                                 </button>

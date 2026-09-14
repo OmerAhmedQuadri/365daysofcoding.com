@@ -107,11 +107,11 @@ export default function LabPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-canvas">
         <Navbar />
         <div className="flex h-[calc(100vh-64px)]">
-          <div className="w-[42%] animate-pulse bg-gray-100 border-r" />
-          <div className="w-[58%] animate-pulse bg-[#1e1e2e]" />
+          <div className="w-[42%] animate-pulse bg-raised border-r" />
+          <div className="w-[58%] animate-pulse bg-canvas" />
         </div>
       </div>
     );
@@ -119,10 +119,10 @@ export default function LabPage() {
 
   if (!lab) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-canvas">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <p className="text-sm text-gray-400">Lab not found.</p>
+          <p className="text-sm text-fg-subtle">Lab not found.</p>
         </div>
       </div>
     );
@@ -133,30 +133,30 @@ export default function LabPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="min-h-screen bg-gray-50 flex flex-col"
+      className="min-h-screen bg-canvas flex flex-col"
     >
       <Navbar />
 
       <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 64px)' }}>
         {/* Left — concept */}
-        <div className="w-[42%] border-r border-gray-200 overflow-hidden">
+        <div className="w-[42%] border-r border-line overflow-hidden">
           <ConceptPanel lab={lab} />
         </div>
 
         {/* Right — editor + results */}
-        <div className="w-[58%] flex flex-col bg-[#1e1e2e] relative">
+        <div className="w-[58%] flex flex-col bg-canvas relative">
           {/* Editor toolbar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-[#181825] border-b border-[#313244] shrink-0">
+          <div className="flex items-center justify-between px-4 py-2 bg-surface border-b border-line shrink-0">
             <div className="flex items-center gap-2">
               {topicId && (
                 <Link
                   to={`/topics/${topicId}`}
-                  className="text-xs text-[#6c7086] hover:text-[#cdd6f4] transition-colors mr-1"
+                  className="text-xs text-fg-subtle hover:text-fg transition-colors mr-1"
                 >
                   ← Topic
                 </Link>
               )}
-              <span className="text-xs text-[#6c7086]">
+              <span className="text-xs text-fg-subtle">
                 {lab.lab_type === 'react' ? 'React' : 'JavaScript'}
               </span>
             </div>
@@ -164,7 +164,7 @@ export default function LabPage() {
             <button
               onClick={handleRun}
               disabled={running}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
             >
               {running ? <Spinner /> : <RunIcon />}
               {running ? 'Running…' : 'Run Tests'}
@@ -177,11 +177,11 @@ export default function LabPage() {
           </div>
 
           {/* Test results panel */}
-          <div className="h-56 overflow-y-auto bg-white border-t border-gray-200 shrink-0">
+          <div className="h-56 overflow-y-auto bg-surface border-t border-line shrink-0">
             <TestResults results={results} />
             {results.length === 0 && !running && (
-              <p className="px-4 py-3 text-xs text-gray-400">
-                Click <span className="font-medium text-gray-600">Run Tests</span> to check your solution.
+              <p className="px-4 py-3 text-xs text-fg-subtle">
+                Click <span className="font-medium text-fg-muted">Run Tests</span> to check your solution.
               </p>
             )}
           </div>
@@ -194,23 +194,23 @@ export default function LabPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="absolute inset-0 flex items-center justify-center bg-[#1e1e2e]/90 backdrop-blur-sm z-10"
+                className="absolute inset-0 flex items-center justify-center bg-canvas/90 backdrop-blur-sm z-10"
               >
                 <motion.div
                   initial={{ scale: 0.9, y: 16 }}
                   animate={{ scale: 1, y: 0 }}
                   exit={{ scale: 0.9, y: 16 }}
                   transition={{ type: 'spring', stiffness: 320, damping: 24 }}
-                  className="text-center bg-[#181825] border border-[#313244] rounded-2xl px-10 py-8 shadow-xl"
+                  className="text-center bg-surface border border-line rounded-2xl px-10 py-8 shadow-xl"
                 >
                   <div className="text-4xl mb-3">✓</div>
-                  <p className="text-lg font-semibold text-[#a6e3a1] mb-1">All tests passing</p>
-                  <p className="text-sm text-[#6c7086] mb-6">Nice work!</p>
+                  <p className="text-lg font-semibold text-green-300 mb-1">All tests passing</p>
+                  <p className="text-sm text-fg-subtle mb-6">Nice work!</p>
 
                   <div className="flex items-center justify-center gap-3">
                     <button
                       onClick={() => setAllPassed(false)}
-                      className="px-4 py-2 rounded-lg text-sm text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+                      className="px-4 py-2 rounded-lg text-sm text-fg-subtle hover:text-fg transition-colors"
                     >
                       Keep editing
                     </button>
@@ -218,7 +218,7 @@ export default function LabPage() {
                       onClick={() =>
                         navigate(nextLabId ? `/labs/${nextLabId}` : `/topics/${topicId}`)
                       }
-                      className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 text-brand-950 transition-colors"
                     >
                       {nextLabId ? 'Next Lab →' : 'Back to Topic'}
                     </button>

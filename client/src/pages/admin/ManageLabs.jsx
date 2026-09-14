@@ -20,8 +20,8 @@ const FORMAT_LABEL = { problem_solving: 'Problem Solving', fix_the_bug: 'Fix the
 const TYPE_LABEL   = { javascript: 'JS', react: 'React' };
 
 const FORMAT_STYLE = {
-  problem_solving: 'bg-blue-50 text-blue-700 border-blue-200',
-  fix_the_bug:     'bg-amber-50 text-amber-700 border-amber-200',
+  problem_solving: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
+  fix_the_bug:     'bg-amber-500/10 text-amber-300 border-amber-500/30',
 };
 
 export default function ManageLabs() {
@@ -111,7 +111,7 @@ export default function ManageLabs() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-10">
 
@@ -119,18 +119,18 @@ export default function ManageLabs() {
           <div>
             <Link
               to={topic ? `/admin/courses/${topic.course_id}/topics` : '/admin/courses'}
-              className="text-xs text-indigo-600 hover:underline"
+              className="text-xs text-brand-400 hover:underline"
             >
               ← Topics
             </Link>
-            <h1 className="text-2xl font-semibold text-gray-900 mt-1">
+            <h1 className="text-2xl font-semibold text-fg mt-1">
               {loading ? 'Labs' : `Labs: ${topic?.title ?? ''}`}
             </h1>
           </div>
           {!showForm && (
             <button
               onClick={openNew}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 text-brand-950 transition-colors"
             >
               + New Lab
             </button>
@@ -143,41 +143,41 @@ export default function ManageLabs() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.18 }}
-            className="mb-6 rounded-xl border border-indigo-200 bg-white p-5"
+            className="mb-6 rounded-xl border border-brand-500/30 bg-surface p-5"
           >
-            <h2 className="text-sm font-semibold text-gray-800 mb-4">
+            <h2 className="text-sm font-semibold text-fg mb-4">
               {editingId ? 'Edit Lab' : 'New Lab'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Row 1: title + type + format + order */}
               <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-2">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Title</label>
+                  <label className="block text-xs font-medium text-fg-muted mb-1">Title</label>
                   <input
                     value={form.title}
                     onChange={field('title')}
                     required
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                     placeholder="Lab title"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Type</label>
+                  <label className="block text-xs font-medium text-fg-muted mb-1">Type</label>
                   <select
                     value={form.lab_type}
                     onChange={field('lab_type')}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                   >
                     <option value="javascript">JavaScript</option>
                     <option value="react">React</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Format</label>
+                  <label className="block text-xs font-medium text-fg-muted mb-1">Format</label>
                   <select
                     value={form.lab_format}
                     onChange={field('lab_format')}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                   >
                     <option value="problem_solving">Problem Solving</option>
                     <option value="fix_the_bug">Fix the Bug</option>
@@ -187,31 +187,31 @@ export default function ManageLabs() {
 
               {/* Row 2: order_index */}
               <div className="w-24">
-                <label className="block text-xs font-medium text-gray-600 mb-1">Order</label>
+                <label className="block text-xs font-medium text-fg-muted mb-1">Order</label>
                 <input
                   type="number"
                   value={form.order_index}
                   onChange={field('order_index')}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                  className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                 />
               </div>
 
               {/* Concept MD */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Concept (Markdown)</label>
+                <label className="block text-xs font-medium text-fg-muted mb-1">Concept (Markdown)</label>
                 <textarea
                   value={form.concept_md}
                   onChange={field('concept_md')}
                   rows={6}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-indigo-400 resize-y"
+                  className="w-full rounded-lg border border-line px-3 py-2 text-sm font-mono focus:outline-none focus:border-brand-500 resize-y"
                   placeholder="## Title&#10;&#10;Explain the concept here..."
                 />
               </div>
 
               {/* Starter Code */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Starter Code</label>
-                <div className="h-48 rounded-lg overflow-hidden border border-gray-200">
+                <label className="block text-xs font-medium text-fg-muted mb-1">Starter Code</label>
+                <div className="h-48 rounded-lg overflow-hidden border border-line">
                   <CodeEditor
                     key={`starter-${formKey}`}
                     value={form.starter_code}
@@ -222,8 +222,8 @@ export default function ManageLabs() {
 
               {/* Solution Code */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Solution Code</label>
-                <div className="h-48 rounded-lg overflow-hidden border border-gray-200">
+                <label className="block text-xs font-medium text-fg-muted mb-1">Solution Code</label>
+                <div className="h-48 rounded-lg overflow-hidden border border-line">
                   <CodeEditor
                     key={`solution-${formKey}`}
                     value={form.solution_code}
@@ -236,11 +236,11 @@ export default function ManageLabs() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
                 >
                   {saving ? 'Saving…' : 'Save'}
                 </button>
-                <button type="button" onClick={closeForm} className="px-4 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                <button type="button" onClick={closeForm} className="px-4 py-2 rounded-lg text-sm text-fg-muted hover:text-fg transition-colors">
                   Cancel
                 </button>
               </div>
@@ -251,34 +251,34 @@ export default function ManageLabs() {
         {/* List */}
         {loading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl bg-gray-200 animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl bg-line animate-pulse" />)}
           </div>
         ) : labs.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-10">No labs yet.</p>
+          <p className="text-sm text-fg-subtle text-center py-10">No labs yet.</p>
         ) : (
           <div className="space-y-2">
             {labs.map(lab => (
               <div
                 key={lab.id}
-                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
+                className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{lab.title}</p>
+                  <p className="text-sm font-medium text-fg truncate">{lab.title}</p>
                 </div>
-                <span className="shrink-0 text-xs text-gray-400 tabular-nums">#{lab.order_index}</span>
-                <span className="shrink-0 text-xs text-gray-500 font-medium">{TYPE_LABEL[lab.lab_type]}</span>
-                <span className={`shrink-0 text-xs font-medium border rounded-full px-2 py-0.5 ${FORMAT_STYLE[lab.lab_format] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                <span className="shrink-0 text-xs text-fg-subtle tabular-nums">#{lab.order_index}</span>
+                <span className="shrink-0 text-xs text-fg-muted font-medium">{TYPE_LABEL[lab.lab_type]}</span>
+                <span className={`shrink-0 text-xs font-medium border rounded-full px-2 py-0.5 ${FORMAT_STYLE[lab.lab_format] ?? 'bg-raised text-fg-muted border-line'}`}>
                   {FORMAT_LABEL[lab.lab_format] ?? lab.lab_format}
                 </span>
                 <div className="shrink-0 flex items-center gap-2">
                   <Link
                     to={`/admin/labs/${lab.id}/test-cases`}
-                    className="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-xs font-medium text-brand-400 hover:text-brand-300 transition-colors"
                   >
                     Tests →
                   </Link>
-                  <button onClick={() => openEdit(lab)} className="text-xs text-gray-500 hover:text-gray-800 transition-colors">Edit</button>
-                  <button onClick={() => handleDelete(lab.id)} className="text-xs text-red-500 hover:text-red-700 transition-colors">Delete</button>
+                  <button onClick={() => openEdit(lab)} className="text-xs text-fg-muted hover:text-fg transition-colors">Edit</button>
+                  <button onClick={() => handleDelete(lab.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Delete</button>
                 </div>
               </div>
             ))}

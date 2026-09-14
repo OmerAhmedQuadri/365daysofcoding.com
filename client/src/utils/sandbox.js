@@ -1,9 +1,23 @@
-import { transformCode } from './babelTransform.js';
+import { transformCode, LOOP_GUARD_NOW, LOOP_GUARD_DEADLINE } from './babelTransform.js';
 
 const REACT_CDN = [
   'https://unpkg.com/react@18/umd/react.development.js',
   'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
 ];
+
+// How long student code and tests may run before loops throw.
+// Kept below the runner's timeout (testRunner.js) so a stuck loop reports a clear error.
+const LOOP_GUARD_MS = 3000;
+
+// What code inside the sandbox may do: run inline scripts and load React from unpkg.
+// Everything else is blocked: fetch/XHR/WebSocket, images, nested frames, workers, eval.
+const CSP = [
+  "default-src 'none'",
+  "script-src 'unsafe-inline' https://unpkg.com",
+  "style-src 'unsafe-inline'",
+  'img-src data:',
+  "base-uri 'none'",
+].join('; ');
 
 // Prevents </script> in injected code from closing the surrounding script tag
 function escapeForScript(str) {
@@ -11,14 +25,10 @@ function escapeForScript(str) {
 }
 
 export function createSandboxHTML(studentCode, testCases, labType, nonce = '') {
-  let finalCode = studentCode;
-
-  if (labType === 'react') {
-    const { code, error } = transformCode(studentCode);
-    finalCode = error
-      ? `throw new Error(${JSON.stringify('Syntax error: ' + error)});`
-      : code;
-  }
+  const { code, error } = transformCode(studentCode, { jsx: labType === 'react' });
+  const finalCode = error
+    ? `throw new Error(${JSON.stringify('Syntax error: ' + error)});`
+    : code;
 
   const reactScripts = labType === 'react'
     ? REACT_CDN.map(url => `<script src="${url}"></script>`).join('\n')
@@ -39,7 +49,10 @@ export function createSandboxHTML(studentCode, testCases, labType, nonce = '') {
 
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${CSP}">
+</head>
 <body>
 ${rootDiv}
 <script>
@@ -63,6 +76,10 @@ window.onerror = function(msg) {
 };
 </script>
 ${reactScripts}
+<script>
+const ${LOOP_GUARD_NOW} = Date.now;
+const ${LOOP_GUARD_DEADLINE} = ${LOOP_GUARD_NOW}() + ${LOOP_GUARD_MS};
+</script>
 <script>
 ${escapeForScript(finalCode)}
 </script>

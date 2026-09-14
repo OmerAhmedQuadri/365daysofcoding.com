@@ -27,40 +27,40 @@ export default function InstructorDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
 
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-24 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-24 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : !bootcamp ? (
           <div className="text-center py-16">
-            <p className="text-sm text-gray-400">You are not assigned to any bootcamp.</p>
+            <p className="text-sm text-fg-subtle">You are not assigned to any bootcamp.</p>
           </div>
         ) : (
           <>
             <div className="mb-8">
-              <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-1">
+              <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide mb-1">
                 Instructor Dashboard
               </p>
-              <h1 className="text-2xl font-semibold text-gray-900">{bootcamp.name}</h1>
+              <h1 className="text-2xl font-semibold text-fg">{bootcamp.name}</h1>
               {bootcamp.description && (
-                <p className="mt-1 text-sm text-gray-500">{bootcamp.description}</p>
+                <p className="mt-1 text-sm text-fg-muted">{bootcamp.description}</p>
               )}
             </div>
 
             <section>
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">
+              <h2 className="text-sm font-semibold text-fg-muted mb-3">
                 Students
-                <span className="ml-2 text-gray-400 font-normal">{students.length}</span>
+                <span className="ml-2 text-fg-subtle font-normal">{students.length}</span>
               </h2>
 
               {students.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-8">No students enrolled yet.</p>
+                <p className="text-sm text-fg-subtle text-center py-8">No students enrolled yet.</p>
               ) : (
                 <motion.div
                   className="space-y-3"

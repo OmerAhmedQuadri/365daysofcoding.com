@@ -23,28 +23,28 @@ export default function Leaderboard() {
   const isLoading = bootcampLoading || loading;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 py-10">
-        <Link to="/bootcamp" className="text-sm text-indigo-600 hover:underline">
+        <Link to="/bootcamp" className="text-sm text-brand-400 hover:underline">
           ← Back to Bootcamp
         </Link>
 
         <div className="mt-4 mb-8">
           {bootcamp ? (
             <>
-              <h1 className="text-2xl font-semibold text-gray-900">{bootcamp.name}</h1>
-              <p className="mt-1 text-sm text-gray-500">Leaderboard</p>
+              <h1 className="text-2xl font-semibold text-fg">{bootcamp.name}</h1>
+              <p className="mt-1 text-sm text-fg-muted">Leaderboard</p>
             </>
           ) : (
-            <div className="h-8 w-48 rounded bg-gray-200 animate-pulse" />
+            <div className="h-8 w-48 rounded bg-line animate-pulse" />
           )}
         </div>
 
         {isLoading ? (
           <div className="space-y-2">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-12 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-12 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : (

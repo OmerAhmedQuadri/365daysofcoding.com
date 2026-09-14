@@ -32,22 +32,22 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-canvas">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8"
+        className="w-full max-w-sm bg-surface rounded-2xl shadow-sm border border-line p-8"
       >
         <div className="mb-6">
           <Brand />
         </div>
 
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create account</h1>
+        <h1 className="text-2xl font-semibold text-fg mb-6">Create account</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-fg-muted mb-1">
               Name
             </label>
             <input
@@ -56,12 +56,12 @@ export default function Register() {
               required
               value={form.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-fg-muted mb-1">
               Email
             </label>
             <input
@@ -70,12 +70,12 @@ export default function Register() {
               required
               value={form.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-fg-muted mb-1">
               Password
             </label>
             <input
@@ -84,7 +84,7 @@ export default function Register() {
               required
               value={form.password}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
 
@@ -92,7 +92,7 @@ export default function Register() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-sm text-red-600"
+              className="text-sm text-red-400"
             >
               {error}
             </motion.p>
@@ -101,15 +101,15 @@ export default function Register() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-indigo-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+            className="w-full bg-brand-500 text-brand-950 rounded-lg py-2 text-sm font-medium hover:bg-brand-400 disabled:opacity-50 transition-colors"
           >
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-gray-500 text-center">
+        <p className="mt-4 text-sm text-fg-muted text-center">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:underline">
+          <Link to="/login" className="text-brand-400 hover:underline">
             Sign in
           </Link>
         </p>

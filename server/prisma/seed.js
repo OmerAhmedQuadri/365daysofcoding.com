@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -40,6 +40,19 @@ async function main() {
       { id: student2Id,   email: 'student2@365daysofcoding.com',   name: 'Jordan Lee',  password_hash: studentHash,    role: 'student' },
     ],
   });
+
+  // Shared "Try now" account (DEMO_USER_EMAIL). Random password: Try now signs in without one.
+  // Not added to any bootcamp, so demo visitors never show up on a leaderboard.
+  if (process.env.DEMO_USER_EMAIL) {
+    await prisma.user.create({
+      data: {
+        email: process.env.DEMO_USER_EMAIL.trim(),
+        name: 'Demo User',
+        password_hash: await bcrypt.hash(randomBytes(32).toString('hex'), SALT),
+        role: 'student',
+      },
+    });
+  }
 
   // --- Bootcamp ---
   const bootcampId = randomUUID();
@@ -708,6 +721,7 @@ async function main() {
 
   console.log('Done.');
   console.log('  Users:       4  (admin, instructor, student1, student2)');
+  if (process.env.DEMO_USER_EMAIL) console.log(`  Demo user:   ${process.env.DEMO_USER_EMAIL.trim()}`);
   console.log('  Bootcamp:    Batch 1');
   console.log('  Course:      JavaScript Fundamentals');
   console.log('  Topics:      3  (Variables & Types, Arrays, Functions)');

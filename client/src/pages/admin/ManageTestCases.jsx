@@ -81,7 +81,7 @@ export default function ManageTestCases() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
 
@@ -89,18 +89,18 @@ export default function ManageTestCases() {
           <div>
             <Link
               to={lab ? `/admin/topics/${lab.topic_id}/labs` : '/admin/courses'}
-              className="text-xs text-indigo-600 hover:underline"
+              className="text-xs text-brand-400 hover:underline"
             >
               ← Labs
             </Link>
-            <h1 className="text-2xl font-semibold text-gray-900 mt-1">
+            <h1 className="text-2xl font-semibold text-fg mt-1">
               {loading ? 'Test Cases' : `Test Cases: ${lab?.title ?? ''}`}
             </h1>
           </div>
           {!showForm && (
             <button
               onClick={openNew}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 text-brand-950 transition-colors"
             >
               + New Test Case
             </button>
@@ -113,37 +113,37 @@ export default function ManageTestCases() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.18 }}
-            className="mb-6 rounded-xl border border-indigo-200 bg-white p-5"
+            className="mb-6 rounded-xl border border-brand-500/30 bg-surface p-5"
           >
-            <h2 className="text-sm font-semibold text-gray-800 mb-4">
+            <h2 className="text-sm font-semibold text-fg mb-4">
               {editingId ? 'Edit Test Case' : 'New Test Case'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-4 gap-3">
                 <div className="col-span-3">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                  <label className="block text-xs font-medium text-fg-muted mb-1">Description</label>
                   <input
                     value={form.description}
                     onChange={field('description')}
                     required
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                     placeholder="e.g. Returns the correct sum"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Order</label>
+                  <label className="block text-xs font-medium text-fg-muted mb-1">Order</label>
                   <input
                     type="number"
                     value={form.order_index}
                     onChange={field('order_index')}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-indigo-400"
+                    className="w-full rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:border-brand-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Test Code</label>
-                <div className="h-40 rounded-lg overflow-hidden border border-gray-200">
+                <label className="block text-xs font-medium text-fg-muted mb-1">Test Code</label>
+                <div className="h-40 rounded-lg overflow-hidden border border-line">
                   <CodeEditor
                     key={`test-${formKey}`}
                     value={form.test_code}
@@ -156,11 +156,11 @@ export default function ManageTestCases() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 text-white transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-brand-500 hover:bg-brand-400 disabled:opacity-60 text-brand-950 transition-colors"
                 >
                   {saving ? 'Saving…' : 'Save'}
                 </button>
-                <button type="button" onClick={closeForm} className="px-4 py-2 rounded-lg text-sm text-gray-500 hover:text-gray-800 transition-colors">
+                <button type="button" onClick={closeForm} className="px-4 py-2 rounded-lg text-sm text-fg-muted hover:text-fg transition-colors">
                   Cancel
                 </button>
               </div>
@@ -171,25 +171,25 @@ export default function ManageTestCases() {
         {/* List */}
         {loading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl bg-gray-200 animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-xl bg-line animate-pulse" />)}
           </div>
         ) : testCases.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-10">No test cases yet.</p>
+          <p className="text-sm text-fg-subtle text-center py-10">No test cases yet.</p>
         ) : (
           <div className="space-y-2">
             {testCases.map(tc => (
               <div
                 key={tc.id}
-                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
+                className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{tc.description}</p>
-                  <p className="text-xs text-gray-400 font-mono truncate mt-0.5">{tc.test_code}</p>
+                  <p className="text-sm font-medium text-fg truncate">{tc.description}</p>
+                  <p className="text-xs text-fg-subtle font-mono truncate mt-0.5">{tc.test_code}</p>
                 </div>
-                <span className="shrink-0 text-xs text-gray-400 tabular-nums">#{tc.order_index}</span>
+                <span className="shrink-0 text-xs text-fg-subtle tabular-nums">#{tc.order_index}</span>
                 <div className="shrink-0 flex items-center gap-2">
-                  <button onClick={() => openEdit(tc)} className="text-xs text-gray-500 hover:text-gray-800 transition-colors">Edit</button>
-                  <button onClick={() => handleDelete(tc.id)} className="text-xs text-red-500 hover:text-red-700 transition-colors">Delete</button>
+                  <button onClick={() => openEdit(tc)} className="text-xs text-fg-muted hover:text-fg transition-colors">Edit</button>
+                  <button onClick={() => handleDelete(tc.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Delete</button>
                 </div>
               </div>
             ))}

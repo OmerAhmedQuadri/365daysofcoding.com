@@ -4,33 +4,34 @@ import { EditorView, lineNumbers, highlightActiveLine } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
+import { colors } from '../../theme.js';
 
 const darkHighlight = HighlightStyle.define([
-  { tag: tags.keyword,                    color: '#cba6f7' },
-  { tag: tags.string,                     color: '#a6e3a1' },
-  { tag: tags.comment,                    color: '#6c7086', fontStyle: 'italic' },
-  { tag: tags.number,                     color: '#fab387' },
-  { tag: [tags.bool, tags.null],          color: '#fab387' },
-  { tag: tags.operator,                   color: '#89dceb' },
-  { tag: tags.propertyName,               color: '#89b4fa' },
-  { tag: tags.function(tags.variableName), color: '#89b4fa' },
-  { tag: tags.definition(tags.variableName), color: '#cdd6f4' },
-  { tag: tags.typeName,                   color: '#f9e2af' },
-  { tag: tags.punctuation,                color: '#cdd6f4' },
+  { tag: tags.keyword,                    color: colors.brand[400] },
+  { tag: tags.string,                     color: '#fcd34d' },
+  { tag: tags.comment,                    color: colors.fg.subtle, fontStyle: 'italic' },
+  { tag: tags.number,                     color: '#fb923c' },
+  { tag: [tags.bool, tags.null],          color: '#fb923c' },
+  { tag: tags.operator,                   color: '#5eead4' },
+  { tag: tags.propertyName,               color: '#93c5fd' },
+  { tag: tags.function(tags.variableName), color: '#7dd3fc' },
+  { tag: tags.definition(tags.variableName), color: colors.fg.DEFAULT },
+  { tag: tags.typeName,                   color: '#c4b5fd' },
+  { tag: tags.punctuation,                color: colors.fg.muted },
 ]);
 
 const darkTheme = EditorView.theme(
   {
-    '&': { background: '#1e1e2e', color: '#cdd6f4', height: '100%' },
+    '&': { background: colors.canvas, color: colors.fg.DEFAULT, height: '100%' },
     '.cm-scroller': { overflow: 'auto', fontFamily: "ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace", fontSize: '13px' },
-    '.cm-content': { caretColor: '#f5e0dc', padding: '8px 0' },
-    '.cm-cursor': { borderLeftColor: '#f5e0dc' },
-    '.cm-gutters': { background: '#181825', color: '#6c7086', border: 'none', borderRight: '1px solid #313244' },
+    '.cm-content': { caretColor: colors.brand[400], padding: '8px 0' },
+    '.cm-cursor': { borderLeftColor: colors.brand[400] },
+    '.cm-gutters': { background: colors.surface, color: colors.fg.subtle, border: 'none', borderRight: `1px solid ${colors.line.DEFAULT}` },
     '.cm-gutterElement': { padding: '0 10px 0 6px' },
-    '.cm-activeLine': { background: '#313244' },
-    '.cm-activeLineGutter': { background: '#313244' },
+    '.cm-activeLine': { background: `${colors.fg.DEFAULT}0d` },
+    '.cm-activeLineGutter': { background: colors.raised, color: colors.fg.muted },
     '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection': {
-      background: '#45475a !important',
+      background: `${colors.brand[500]}40 !important`,
     },
     '.cm-line': { padding: '0 8px' },
   },

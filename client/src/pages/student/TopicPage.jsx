@@ -19,18 +19,18 @@ export default function TopicPage() {
   const passedCount = topic?.completion?.passed ?? 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
         {topic?.course_id ? (
           <Link
             to={`/courses/${topic.course_id}`}
-            className="text-sm text-indigo-600 hover:underline"
+            className="text-sm text-brand-400 hover:underline"
           >
             ← Back to course
           </Link>
         ) : (
-          <Link to="/" className="text-sm text-indigo-600 hover:underline">
+          <Link to="/" className="text-sm text-brand-400 hover:underline">
             ← All courses
           </Link>
         )}
@@ -38,18 +38,18 @@ export default function TopicPage() {
         {loading ? (
           <div className="mt-6 space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-16 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : (
           <>
             <div className="mt-4 mb-8">
-              <h1 className="text-2xl font-semibold text-gray-900">{topic?.title}</h1>
+              <h1 className="text-2xl font-semibold text-fg">{topic?.title}</h1>
               {topic?.description && (
-                <p className="mt-1 text-sm text-gray-500">{topic.description}</p>
+                <p className="mt-1 text-sm text-fg-muted">{topic.description}</p>
               )}
               {topic?.completion && (
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-fg-subtle">
                   {topic.completion.passed} of {topic.completion.total} labs passed
                 </p>
               )}

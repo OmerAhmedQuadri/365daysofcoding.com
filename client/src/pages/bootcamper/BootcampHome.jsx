@@ -5,28 +5,28 @@ import Navbar from '../../components/shared/Navbar.jsx';
 
 const FORMAT_LABEL = { problem_solving: 'Problem Solving', fix_the_bug: 'Fix the Bug' };
 const FORMAT_STYLE = {
-  problem_solving: 'bg-blue-50 text-blue-700 border-blue-200',
-  fix_the_bug: 'bg-amber-50 text-amber-700 border-amber-200',
+  problem_solving: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
+  fix_the_bug: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
 };
 
 export default function BootcampHome() {
   const { bootcamp, loading } = useBootcamp();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
 
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-16 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : !bootcamp ? (
           <div className="text-center py-16">
-            <p className="text-sm text-gray-400">You are not a member of any bootcamp.</p>
-            <Link to="/" className="mt-4 inline-block text-sm text-indigo-600 hover:underline">
+            <p className="text-sm text-fg-subtle">You are not a member of any bootcamp.</p>
+            <Link to="/" className="mt-4 inline-block text-sm text-brand-400 hover:underline">
               ← Back to courses
             </Link>
           </div>
@@ -34,26 +34,26 @@ export default function BootcampHome() {
           <>
             <div className="mb-8 flex items-end justify-between">
               <div>
-                <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-1">
+                <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide mb-1">
                   Bootcamp
                 </p>
-                <h1 className="text-2xl font-semibold text-gray-900">{bootcamp.name}</h1>
+                <h1 className="text-2xl font-semibold text-fg">{bootcamp.name}</h1>
                 {bootcamp.description && (
-                  <p className="mt-1 text-sm text-gray-500">{bootcamp.description}</p>
+                  <p className="mt-1 text-sm text-fg-muted">{bootcamp.description}</p>
                 )}
               </div>
               <Link
                 to="/bootcamp/leaderboard"
-                className="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                className="shrink-0 text-sm font-medium text-brand-400 hover:text-brand-300 transition-colors"
               >
                 Leaderboard →
               </Link>
             </div>
 
             <section>
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">
+              <h2 className="text-sm font-semibold text-fg-muted mb-3">
                 Assigned Labs
-                <span className="ml-2 text-gray-400 font-normal">
+                <span className="ml-2 text-fg-subtle font-normal">
                   {bootcamp.bootcamp_labs.length}
                 </span>
               </h2>
@@ -74,12 +74,12 @@ export default function BootcampHome() {
                   >
                     <Link
                       to={`/labs/${bl.lab.id}`}
-                      className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 hover:border-indigo-300 hover:shadow-sm transition-colors"
+                      className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 hover:border-brand-500/50 hover:shadow-sm transition-colors"
                     >
-                      <span className="flex-1 min-w-0 text-sm font-medium text-gray-900 truncate">
+                      <span className="flex-1 min-w-0 text-sm font-medium text-fg truncate">
                         {bl.lab.title}
                       </span>
-                      <span className={`shrink-0 text-xs font-medium border rounded-full px-2 py-0.5 ${FORMAT_STYLE[bl.lab.lab_format] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                      <span className={`shrink-0 text-xs font-medium border rounded-full px-2 py-0.5 ${FORMAT_STYLE[bl.lab.lab_format] ?? 'bg-raised text-fg-muted border-line'}`}>
                         {FORMAT_LABEL[bl.lab.lab_format] ?? bl.lab.lab_format}
                       </span>
                     </Link>
@@ -87,7 +87,7 @@ export default function BootcampHome() {
                 ))}
 
                 {bootcamp.bootcamp_labs.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-8">
+                  <p className="text-sm text-fg-subtle text-center py-8">
                     No labs assigned yet.
                   </p>
                 )}

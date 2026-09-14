@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma.js';
+import { isDemoUser } from '../lib/demo.js';
 
 export async function upsert(req, res, next) {
   try {
@@ -8,10 +9,14 @@ export async function upsert(req, res, next) {
       return res.status(400).json({ error: 'lab_id, code, status, tests_passed, and tests_total are required' });
     }
 
+    // The demo account is shared by every visitor, so its code is never stored.
+    // Otherwise one visitor could leave code in the editor for the next one to run.
+    const savedCode = isDemoUser(req.user) ? '' : code;
+
     const submission = await prisma.labSubmission.upsert({
       where: { user_id_lab_id: { user_id: req.user.id, lab_id } },
-      update: { code, status, tests_passed, tests_total },
-      create: { user_id: req.user.id, lab_id, code, status, tests_passed, tests_total },
+      update: { code: savedCode, status, tests_passed, tests_total },
+      create: { user_id: req.user.id, lab_id, code: savedCode, status, tests_passed, tests_total },
     });
 
     res.json({ data: submission });
@@ -26,7 +31,10 @@ export async function getByLab(req, res, next) {
       where: { user_id_lab_id: { user_id: req.user.id, lab_id: req.params.labId } },
     });
 
-    res.json({ data: submission ?? null });
+    // null code makes the lab page show starter code (also hides code saved before this rule)
+    const data = submission && isDemoUser(req.user) ? { ...submission, code: null } : submission;
+
+    res.json({ data: data ?? null });
   } catch (err) {
     next(err);
   }

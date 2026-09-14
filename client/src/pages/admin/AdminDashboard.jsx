@@ -28,20 +28,20 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-canvas">
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-1">Admin</p>
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+          <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide mb-1">Admin</p>
+          <h1 className="text-2xl font-semibold text-fg">Dashboard</h1>
         </div>
 
         {/* Stats */}
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-20 rounded-xl bg-gray-200 animate-pulse" />
+              <div key={i} className="h-20 rounded-xl bg-line animate-pulse" />
             ))}
           </div>
         ) : (
@@ -60,10 +60,10 @@ export default function AdminDashboard() {
               <motion.div
                 key={label}
                 variants={cardVariants}
-                className="rounded-xl border border-gray-200 bg-white p-5"
+                className="rounded-xl border border-line bg-surface p-5"
               >
-                <p className="text-2xl font-bold text-gray-900">{value ?? '–'}</p>
-                <p className="text-sm text-gray-500 mt-0.5">{label}</p>
+                <p className="text-2xl font-bold text-fg">{value ?? '–'}</p>
+                <p className="text-sm text-fg-muted mt-0.5">{label}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -71,16 +71,16 @@ export default function AdminDashboard() {
 
         {/* Navigation */}
         <section>
-          <h2 className="text-sm font-semibold text-gray-700 mb-3">Manage</h2>
+          <h2 className="text-sm font-semibold text-fg-muted mb-3">Manage</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {NAV_LINKS.map(({ label, desc, to }) => (
               <Link
                 key={to}
                 to={to}
-                className="block rounded-xl border border-gray-200 bg-white p-4 hover:border-indigo-300 hover:shadow-sm transition-colors"
+                className="block rounded-xl border border-line bg-surface p-4 hover:border-brand-500/50 hover:shadow-sm transition-colors"
               >
-                <p className="font-medium text-gray-900 text-sm">{label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                <p className="font-medium text-fg text-sm">{label}</p>
+                <p className="text-xs text-fg-muted mt-0.5">{desc}</p>
               </Link>
             ))}
           </div>
