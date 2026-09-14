@@ -7,23 +7,33 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState('');
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!token) {
       setUser(null);
+      setAuthError('');
       setIsLoading(false);
       return;
     }
     setIsLoading(true);
+    setAuthError('');
     getMe(token)
       .then(setUser)
-      .catch(() => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
+      .catch((err) => {
+        if (err.status === 401 || err.status === 404) {
+          // Expired or invalid token, or the account no longer exists: sign out
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        } else {
+          // Server or database trouble: keep the session so a retry can restore it
+          setAuthError(err.message);
+        }
       })
       .finally(() => setIsLoading(false));
-  }, [token]);
+  }, [token, attempt]);
 
   function login(newToken) {
     localStorage.setItem('token', newToken);
@@ -35,10 +45,15 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
+    setAuthError('');
+  }
+
+  function retryAuth() {
+    setAttempt((n) => n + 1);
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, authError, login, logout, retryAuth }}>
       {children}
     </AuthContext.Provider>
   );

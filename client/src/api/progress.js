@@ -1,24 +1,16 @@
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
+import { request, authHeaders } from './request.js';
 
 export async function getOverview() {
-  const res = await fetch('/api/progress/overview', { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch overview');
+  const json = await request('/api/progress/overview', { headers: authHeaders(), fallbackError: 'Failed to fetch overview' });
   return json.data;
 }
 
 export async function getTopicProgress(topicId) {
-  const res = await fetch(`/api/progress/topic/${topicId}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch topic progress');
+  const json = await request(`/api/progress/topic/${topicId}`, { headers: authHeaders(), fallbackError: 'Failed to fetch topic progress' });
   return json.data;
 }
 
 export async function getCourseProgress(courseId) {
-  const res = await fetch(`/api/progress/course/${courseId}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch course progress');
+  const json = await request(`/api/progress/course/${courseId}`, { headers: authHeaders(), fallbackError: 'Failed to fetch course progress' });
   return json.data;
 }

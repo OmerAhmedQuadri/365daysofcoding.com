@@ -1,16 +1,13 @@
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
+import { request, authHeaders } from './request.js';
 
 async function req(method, path, body) {
   const opts = {
     method,
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    fallbackError: 'Request failed',
   };
   if (body !== undefined) opts.body = JSON.stringify(body);
-  const res = await fetch(`/api/admin${path}`, opts);
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Request failed');
+  const json = await request(`/api/admin${path}`, opts);
   return json.data ?? json;
 }
 

@@ -1,17 +1,11 @@
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
+import { request, authHeaders } from './request.js';
 
 export async function getCourses() {
-  const res = await fetch('/api/courses', { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch courses');
+  const json = await request('/api/courses', { headers: authHeaders(), fallbackError: 'Failed to fetch courses' });
   return json.data;
 }
 
 export async function getCourse(id) {
-  const res = await fetch(`/api/courses/${id}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch course');
+  const json = await request(`/api/courses/${id}`, { headers: authHeaders(), fallbackError: 'Failed to fetch course' });
   return json.data;
 }

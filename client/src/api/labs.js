@@ -1,15 +1,12 @@
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
+import { request, authHeaders } from './request.js';
 
 export async function getLab(id) {
-  const res = await fetch(`/api/labs/${id}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) {
-    const err = new Error(json.error || 'Failed to fetch lab');
-    err.status = res.status;
-    err.topic_id = json.topic_id;
+  try {
+    const json = await request(`/api/labs/${id}`, { headers: authHeaders(), fallbackError: 'Failed to fetch lab' });
+    return json.data;
+  } catch (err) {
+    // A locked lab responds with the topic to send the student back to
+    err.topic_id = err.body?.topic_id;
     throw err;
   }
-  return json.data;
 }

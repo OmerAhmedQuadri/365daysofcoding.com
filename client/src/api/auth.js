@@ -1,39 +1,36 @@
+import { request } from './request.js';
+
 const BASE = '/api/auth';
 
 export async function register(data) {
-  const res = await fetch(`${BASE}/register`, {
+  const json = await request(`${BASE}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
+    fallbackError: 'Registration failed',
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Registration failed');
   return json.data;
 }
 
 export async function login(data) {
-  const res = await fetch(`${BASE}/login`, {
+  const json = await request(`${BASE}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
+    fallbackError: 'Login failed',
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Login failed');
   return json.data;
 }
 
 export async function demoLogin() {
-  const res = await fetch(`${BASE}/demo`, { method: 'POST' });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Could not start the demo');
+  const json = await request(`${BASE}/demo`, { method: 'POST', fallbackError: 'Could not start the demo' });
   return json.data;
 }
 
 export async function getMe(token) {
-  const res = await fetch(`${BASE}/me`, {
+  const json = await request(`${BASE}/me`, {
     headers: { Authorization: `Bearer ${token}` },
+    fallbackError: 'Failed to fetch user',
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch user');
   return json.data;
 }

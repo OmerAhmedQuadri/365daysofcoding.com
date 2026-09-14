@@ -1,21 +1,16 @@
-function authHeaders() {
-  return { Authorization: `Bearer ${localStorage.getItem('token')}` };
-}
+import { request, authHeaders } from './request.js';
 
 export async function upsertSubmission({ lab_id, code, status, tests_passed, tests_total }) {
-  const res = await fetch('/api/submissions', {
+  const json = await request('/api/submissions', {
     method: 'POST',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ lab_id, code, status, tests_passed, tests_total }),
+    fallbackError: 'Failed to submit',
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to submit');
   return json.data;
 }
 
 export async function getSubmission(labId) {
-  const res = await fetch(`/api/submissions/${labId}`, { headers: authHeaders() });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Failed to fetch submission');
+  const json = await request(`/api/submissions/${labId}`, { headers: authHeaders(), fallbackError: 'Failed to fetch submission' });
   return json.data;
 }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Terminal window: soft dark fill (#262626) with a bright green edge and ">_" prompt (brand-400 #4ade80).
+       Stroke widths and the underscore's y position sit on whole pixels at 16px and 32px. -->
+  <rect x="1" y="1" width="30" height="30" rx="6" fill="#262626" stroke="#4ade80" stroke-width="2"/>
+  <path d="M9.5 11 14 15.5 9.5 20" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17 21h5.5" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+</svg>
