@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { register as apiRegister, verifyRegistration } from '../../api/auth.js';
+import { requestPasswordReset, resetPassword } from '../../api/auth.js';
 import useAuth from '../../hooks/useAuth.js';
 import useCountdown from '../../hooks/useCountdown.js';
 import Brand from '../../components/shared/Brand.jsx';
@@ -14,12 +14,12 @@ const labelClass = 'block text-sm font-medium text-fg-muted mb-1';
 const inputClass = 'w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500';
 const primaryButtonClass = 'w-full bg-brand-500 text-brand-950 rounded-lg py-2 text-sm font-medium hover:bg-brand-400 disabled:opacity-50 transition-colors';
 
-export default function Register() {
+export default function ForgotPassword() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [step, setStep] = useState('details'); // 'details', then 'code' once the email is sent
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm_password: '' });
-  const [code, setCode] = useState('');
+  const [step, setStep] = useState('email'); // 'email', then 'reset' once a code was requested
+  const [email, setEmail] = useState('');
+  const [form, setForm] = useState({ code: '', new_password: '', confirm_password: '' });
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -34,9 +34,9 @@ export default function Register() {
     setNotice('');
     setSubmitting(true);
     try {
-      await apiRegister({ name: form.name, email: form.email, password: form.password });
-      setStep('code');
-      setCode('');
+      await requestPasswordReset(email);
+      setStep('reset');
+      setForm((f) => ({ ...f, code: '' }));
       setResendIn(RESEND_SECONDS);
       return true;
     } catch (err) {
@@ -47,27 +47,26 @@ export default function Register() {
     }
   }
 
-  async function handleDetailsSubmit(e) {
+  async function handleEmailSubmit(e) {
     e.preventDefault();
-    if (form.password !== form.confirm_password) {
-      setNotice('');
-      setError("Passwords don't match");
-      return;
-    }
     await sendCode();
   }
 
   async function handleResend() {
-    if (await sendCode()) setNotice('We sent you a new code.');
+    if (await sendCode()) setNotice('If an account exists, we sent it a new code.');
   }
 
-  async function handleVerify(e) {
+  async function handleReset(e) {
     e.preventDefault();
     setError('');
     setNotice('');
+    if (form.new_password !== form.confirm_password) {
+      setError("Passwords don't match");
+      return;
+    }
     setSubmitting(true);
     try {
-      const { token } = await verifyRegistration({ email: form.email, code });
+      const { token } = await resetPassword({ email, code: form.code, new_password: form.new_password });
       login(token);
       navigate('/');
     } catch (err) {
@@ -77,8 +76,8 @@ export default function Register() {
     }
   }
 
-  function backToDetails() {
-    setStep('details');
+  function backToEmail() {
+    setStep('email');
     setError('');
     setNotice('');
   }
@@ -111,36 +110,84 @@ export default function Register() {
         </div>
 
         <AnimatePresence mode="wait" initial={false}>
-          {step === 'details' ? (
+          {step === 'email' ? (
             <motion.div
-              key="details"
+              key="email"
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -12 }}
               transition={{ duration: 0.2 }}
             >
-              <h1 className="text-2xl font-semibold text-fg mb-6">Create account</h1>
+              <h1 className="text-2xl font-semibold text-fg mb-2">Reset your password</h1>
+              <p className="text-sm text-fg-muted mb-6">
+                Enter the email you signed up with and we&apos;ll send you a code to set a new password.
+              </p>
 
-              <form onSubmit={handleDetailsSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="name" className={labelClass}>Name</label>
-                  <input id="name" type="text" name="name" required autoComplete="name" value={form.name} onChange={handleChange} className={inputClass} />
-                </div>
-
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="email" className={labelClass}>Email</label>
-                  <input id="email" type="email" name="email" required autoComplete="email" value={form.email} onChange={handleChange} className={inputClass} />
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+
+                {messages}
+
+                <button type="submit" disabled={submitting} className={primaryButtonClass}>
+                  {submitting ? 'Sending code…' : 'Send code'}
+                </button>
+              </form>
+
+              <p className="mt-4 text-sm text-fg-muted text-center">
+                Remembered it?{' '}
+                <Link to="/login" className="text-brand-400 hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="reset"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 12 }}
+              transition={{ duration: 0.2 }}
+            >
+              <h1 className="text-2xl font-semibold text-fg mb-2">Check your email</h1>
+              <p className="text-sm text-fg-muted mb-6">
+                If an account exists for <span className="text-fg">{email}</span>, we sent it a 6-digit code. It expires in 10 minutes.
+              </p>
+
+              <form onSubmit={handleReset} className="space-y-4">
+                <div>
+                  <label htmlFor="code" className={labelClass}>Code</label>
+                  <CodeInput
+                    id="code"
+                    name="code"
+                    required
+                    autoFocus
+                    value={form.code}
+                    onChange={(code) => setForm((f) => ({ ...f, code }))}
+                    className={inputClass}
+                  />
                 </div>
 
                 <div>
-                  <label htmlFor="password" className={labelClass}>Password</label>
+                  <label htmlFor="new_password" className={labelClass}>New password</label>
                   <PasswordInput
-                    id="password"
-                    name="password"
+                    id="new_password"
+                    name="new_password"
                     required
                     minLength={MIN_PASSWORD_LENGTH}
                     autoComplete="new-password"
-                    value={form.password}
+                    value={form.new_password}
                     onChange={handleChange}
                     className={inputClass}
                   />
@@ -148,7 +195,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirm_password" className={labelClass}>Confirm password</label>
+                  <label htmlFor="confirm_password" className={labelClass}>Confirm new password</label>
                   <PasswordInput
                     id="confirm_password"
                     name="confirm_password"
@@ -162,41 +209,8 @@ export default function Register() {
 
                 {messages}
 
-                <button type="submit" disabled={submitting} className={primaryButtonClass}>
-                  {submitting ? 'Sending code…' : 'Continue'}
-                </button>
-              </form>
-
-              <p className="mt-4 text-sm text-fg-muted text-center">
-                Already have an account?{' '}
-                <Link to="/login" className="text-brand-400 hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="code"
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 12 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h1 className="text-2xl font-semibold text-fg mb-2">Check your email</h1>
-              <p className="text-sm text-fg-muted mb-6">
-                We sent a 6-digit code to <span className="text-fg">{form.email}</span>. It expires in 10 minutes.
-              </p>
-
-              <form onSubmit={handleVerify} className="space-y-4">
-                <div>
-                  <label htmlFor="code" className={labelClass}>Verification code</label>
-                  <CodeInput id="code" name="code" required autoFocus value={code} onChange={setCode} className={inputClass} />
-                </div>
-
-                {messages}
-
-                <button type="submit" disabled={submitting || code.length !== 6} className={primaryButtonClass}>
-                  {submitting ? 'Verifying…' : 'Verify and create account'}
+                <button type="submit" disabled={submitting || form.code.length !== 6} className={primaryButtonClass}>
+                  {submitting ? 'Resetting…' : 'Reset password'}
                 </button>
               </form>
 
@@ -209,7 +223,7 @@ export default function Register() {
                 >
                   {resendIn > 0 ? `Resend code in ${resendIn}s` : 'Resend code'}
                 </button>
-                <button type="button" onClick={backToDetails} className="text-fg-muted hover:text-fg transition-colors">
+                <button type="button" onClick={backToEmail} className="text-fg-muted hover:text-fg transition-colors">
                   Use a different email
                 </button>
               </div>

@@ -46,6 +46,28 @@ export async function getMe(token) {
   return json.data;
 }
 
+// Forgot password step 1: emails a reset code if the account exists (the reply is the same either way)
+export async function requestPasswordReset(email) {
+  const json = await request(`${BASE}/password/forgot`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+    fallbackError: 'Could not send the reset code',
+  });
+  return json.message;
+}
+
+// Forgot password step 2: returns { token, user } so the user is signed in straight away
+export async function resetPassword({ email, code, new_password }) {
+  const json = await request(`${BASE}/password/reset`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code, new_password }),
+    fallbackError: 'Could not reset password',
+  });
+  return json.data;
+}
+
 export async function changePassword({ current_password, new_password }) {
   const json = await request(`${BASE}/password`, {
     method: 'PUT',

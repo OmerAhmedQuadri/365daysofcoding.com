@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { login as apiLogin, demoLogin } from '../../api/auth.js';
 import useAuth from '../../hooks/useAuth.js';
 import Brand from '../../components/shared/Brand.jsx';
+import PasswordInput from '../../components/shared/PasswordInput.jsx';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -63,10 +64,11 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-fg-muted mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-fg-muted mb-1">
               Email
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               required
@@ -77,13 +79,19 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-fg-muted mb-1">
-              Password
-            </label>
-            <input
-              type="password"
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-fg-muted">
+                Password
+              </label>
+              <Link to="/forgot-password" className="text-xs text-brand-400 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+            <PasswordInput
+              id="password"
               name="password"
               required
+              autoComplete="current-password"
               value={form.password}
               onChange={handleChange}
               className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"

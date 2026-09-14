@@ -1,14 +1,13 @@
 import bcrypt from 'bcrypt';
-import { randomInt } from 'crypto';
 import prisma from '../lib/prisma.js';
 import { sign } from '../lib/jwt.js';
 import { getDemoEmail, isDemoUser } from '../lib/demo.js';
-import { sendVerificationCode } from '../lib/mailer.js';
+import { sendVerificationCode, sendPasswordResetCode } from '../lib/mailer.js';
+import { CODE_TTL_MINUTES, inResendCooldown, newCode, checkCode } from '../lib/verificationCode.js';
 
 const MIN_PASSWORD_LENGTH = 8;
-const CODE_TTL_MINUTES = 10;
-const RESEND_COOLDOWN_SECONDS = 60;
-const MAX_CODE_ATTEMPTS = 5;
+// Same answer whether or not the account exists, so the form can't reveal which emails are registered
+const RESET_SENT_MESSAGE = 'If an account exists for that email, we sent a code to it';
 
 function text(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -41,21 +40,13 @@ export async function register(req, res, next) {
     }
 
     const pending = await prisma.pendingRegistration.findUnique({ where: { email } });
-    if (pending && Date.now() - pending.sent_at.getTime() < RESEND_COOLDOWN_SECONDS * 1000) {
+    if (inResendCooldown(pending)) {
       return res.status(429).json({ error: 'Please wait a minute before requesting another code' });
     }
 
-    const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
-    const [password_hash, code_hash] = await Promise.all([bcrypt.hash(password, 10), bcrypt.hash(code, 10)]);
-    const fields = {
-      name,
-      password_hash,
-      code_hash,
-      attempts: 0,
-      expires_at: new Date(Date.now() + CODE_TTL_MINUTES * 60 * 1000),
-      sent_at: new Date(),
-    };
-    await prisma.pendingRegistration.upsert({ where: { email }, update: fields, create: { email, ...fields } });
+    const [{ code, fields }, password_hash] = await Promise.all([newCode(), bcrypt.hash(password, 10)]);
+    const data = { name, password_hash, ...fields };
+    await prisma.pendingRegistration.upsert({ where: { email }, update: data, create: { email, ...data } });
 
     try {
       await sendVerificationCode({ to: email, name, code, expiresInMinutes: CODE_TTL_MINUTES });
@@ -82,27 +73,9 @@ export async function verifyRegistration(req, res, next) {
     }
 
     const pending = await prisma.pendingRegistration.findUnique({ where: { email } });
-    if (!pending || pending.expires_at < new Date()) {
-      if (pending) await prisma.pendingRegistration.delete({ where: { email } }).catch(() => {});
-      return res.status(400).json({ error: 'This code has expired. Request a new one.' });
-    }
-    if (pending.attempts >= MAX_CODE_ATTEMPTS) {
-      await prisma.pendingRegistration.delete({ where: { email } }).catch(() => {});
-      return res.status(400).json({ error: 'Too many incorrect attempts. Request a new code.' });
-    }
-
-    const valid = await bcrypt.compare(code, pending.code_hash);
-    if (!valid) {
-      const { attempts } = await prisma.pendingRegistration.update({
-        where: { email },
-        data: { attempts: { increment: 1 } },
-      });
-      const left = MAX_CODE_ATTEMPTS - attempts;
-      return res.status(400).json({
-        error: left > 0
-          ? `Incorrect code. ${left} attempt${left === 1 ? '' : 's'} left.`
-          : 'Too many incorrect attempts. Request a new code.',
-      });
+    const codeError = await checkCode(prisma.pendingRegistration, { email }, pending, code);
+    if (codeError) {
+      return res.status(400).json({ error: codeError });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -212,6 +185,77 @@ export async function changePassword(req, res, next) {
     });
 
     res.json({ message: 'Password updated' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Forgot password step 1: email a reset code if the account exists.
+export async function forgotPassword(req, res, next) {
+  try {
+    const email = text(req.body.email);
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    // The shared demo account's password can't be changed, so it never gets a reset code
+    if (!user || isDemoUser(user)) {
+      return res.json({ message: RESET_SENT_MESSAGE });
+    }
+
+    const existing = await prisma.passwordReset.findUnique({ where: { user_id: user.id } });
+    if (inResendCooldown(existing)) {
+      return res.json({ message: RESET_SENT_MESSAGE });
+    }
+
+    const { code, fields } = await newCode();
+    await prisma.passwordReset.upsert({
+      where: { user_id: user.id },
+      update: fields,
+      create: { user_id: user.id, ...fields },
+    });
+
+    try {
+      await sendPasswordResetCode({ to: user.email, name: user.name, code, expiresInMinutes: CODE_TTL_MINUTES });
+    } catch (err) {
+      await prisma.passwordReset.delete({ where: { user_id: user.id } }).catch(() => {});
+      console.error('Failed to send password reset email:', err);
+      return res.status(503).json({ error: "We couldn't send the email. Please try again later." });
+    }
+
+    res.json({ message: RESET_SENT_MESSAGE });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Forgot password step 2: check the code, set the new password, and sign the user in.
+export async function resetPassword(req, res, next) {
+  try {
+    const email = text(req.body.email);
+    const code = text(req.body.code);
+    const { new_password } = req.body;
+    if (!email || !code || typeof new_password !== 'string' || !new_password) {
+      return res.status(400).json({ error: 'email, code and new_password are required' });
+    }
+    if (new_password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ error: `New password must be at least ${MIN_PASSWORD_LENGTH} characters` });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    const reset = user ? await prisma.passwordReset.findUnique({ where: { user_id: user.id } }) : null;
+    const codeError = await checkCode(prisma.passwordReset, { user_id: user?.id }, reset, code);
+    if (codeError) {
+      return res.status(400).json({ error: codeError });
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: user.id }, data: { password_hash: await bcrypt.hash(new_password, 10) } }),
+      prisma.passwordReset.delete({ where: { user_id: user.id } }),
+    ]);
+
+    res.json({ data: authResponse(user) });
   } catch (err) {
     next(err);
   }

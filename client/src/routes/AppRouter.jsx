@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 import RoleRoute from './RoleRoute.jsx';
 import Login from '../pages/auth/Login.jsx';
 import Register from '../pages/auth/Register.jsx';
+import ForgotPassword from '../pages/auth/ForgotPassword.jsx';
 import Profile from '../pages/account/Profile.jsx';
 import Settings from '../pages/account/Settings.jsx';
 import Dashboard from '../pages/student/Dashboard.jsx';
@@ -30,6 +31,7 @@ export default function AppRouter() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

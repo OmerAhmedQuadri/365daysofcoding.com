@@ -46,6 +46,7 @@ model User {
   bootcamp_members  BootcampMember[]
   bootcamp_labs     BootcampLab[]    @relation("BootcampLabAssigner")
   lab_submissions   LabSubmission[]
+  password_reset    PasswordReset?
 
   @@map("users")
 }
@@ -181,4 +182,18 @@ model PendingRegistration {
   sent_at       DateTime @default(now())
 
   @@map("pending_registrations")
+}
+
+// Emailed codes for resetting a forgotten password. One row per user; a resend replaces it.
+model PasswordReset {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  code_hash  String
+  attempts   Int      @default(0)
+  expires_at DateTime
+  sent_at    DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
 }

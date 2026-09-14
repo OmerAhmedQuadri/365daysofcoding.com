@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { changePassword } from '../../api/auth.js';
 import useAuth from '../../hooks/useAuth.js';
 import Navbar from '../../components/shared/Navbar.jsx';
+import PasswordInput from '../../components/shared/PasswordInput.jsx';
 
 const MIN_PASSWORD_LENGTH = 8;
 const EMPTY_FORM = { current_password: '', new_password: '', confirm_password: '' };
@@ -71,13 +72,19 @@ export default function Settings() {
             <form onSubmit={handleSubmit} className="mt-5 max-w-sm space-y-4">
               {FIELDS.map((field) => (
                 <div key={field.name}>
-                  <label htmlFor={field.name} className="block text-sm font-medium text-fg-muted mb-1">
-                    {field.label}
-                  </label>
-                  <input
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor={field.name} className="block text-sm font-medium text-fg-muted">
+                      {field.label}
+                    </label>
+                    {field.name === 'current_password' && (
+                      <Link to="/forgot-password" className="text-xs text-brand-400 hover:underline">
+                        Forgot it?
+                      </Link>
+                    )}
+                  </div>
+                  <PasswordInput
                     id={field.name}
                     name={field.name}
-                    type="password"
                     required
                     autoComplete={field.autoComplete}
                     minLength={field.name === 'current_password' ? undefined : MIN_PASSWORD_LENGTH}
