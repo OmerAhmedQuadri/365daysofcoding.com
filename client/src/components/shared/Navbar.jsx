@@ -7,7 +7,7 @@ export default function Navbar() {
   return (
     <nav className="h-14 border-b border-gray-200 bg-white flex items-center px-6 gap-4">
       <Link to="/" className="font-semibold text-indigo-600 text-lg tracking-tight">
-        HelloJS
+        365daysofcoding.com
       </Link>
       <div className="flex-1" />
       <span className="text-sm text-gray-600">{user?.name}</span>

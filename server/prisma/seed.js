@@ -34,10 +34,10 @@ async function main() {
 
   await prisma.user.createMany({
     data: [
-      { id: adminId,      email: 'admin@hellojs.dev',      name: 'Admin',       password_hash: adminHash,      role: 'admin' },
-      { id: instructorId, email: 'instructor@hellojs.dev', name: 'Alex Chen',   password_hash: instructorHash, role: 'instructor' },
-      { id: student1Id,   email: 'student1@hellojs.dev',   name: 'Sam Rivera',  password_hash: studentHash,    role: 'student' },
-      { id: student2Id,   email: 'student2@hellojs.dev',   name: 'Jordan Lee',  password_hash: studentHash,    role: 'student' },
+      { id: adminId,      email: 'admin@365daysofcoding.com',      name: 'Admin',       password_hash: adminHash,      role: 'admin' },
+      { id: instructorId, email: 'instructor@365daysofcoding.com', name: 'Alex Chen',   password_hash: instructorHash, role: 'instructor' },
+      { id: student1Id,   email: 'student1@365daysofcoding.com',   name: 'Sam Rivera',  password_hash: studentHash,    role: 'student' },
+      { id: student2Id,   email: 'student2@365daysofcoding.com',   name: 'Jordan Lee',  password_hash: studentHash,    role: 'student' },
     ],
   });
 
@@ -47,7 +47,7 @@ async function main() {
     data: {
       id: bootcampId,
       name: 'Batch 1',
-      description: 'First cohort of HelloJS learners.',
+      description: 'First cohort of 365daysofcoding.com learners.',
       created_by: adminId,
     },
   });
