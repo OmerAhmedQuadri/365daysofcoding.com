@@ -4,14 +4,17 @@ import { Prisma } from '@prisma/client';
 const DB_UNAVAILABLE_CODES = new Set(['P1001', 'P1002', 'P1008', 'P1017', 'P2024']);
 
 // Never sends raw messages for server errors: Prisma messages include query details and the
-// database host. Full details are logged instead.
+// database host. Users get a generic message; the details, including that it was the database,
+// go to the server log.
 // eslint-disable-next-line no-unused-vars
 export default function errorHandler(err, _req, res, _next) {
+  if (err instanceof Prisma.PrismaClientInitializationError || DB_UNAVAILABLE_CODES.has(err.code)) {
+    console.error('Database unavailable, responding 503:', err);
+    return res.status(503).json({ error: 'The server is having trouble right now. Please try again in a moment.' });
+  }
+
   console.error(err);
 
-  if (err instanceof Prisma.PrismaClientInitializationError || DB_UNAVAILABLE_CODES.has(err.code)) {
-    return res.status(503).json({ error: "We're having trouble reaching the database. Please try again in a few seconds." });
-  }
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === 'P2025') return res.status(404).json({ error: 'Not found' });
     if (err.code === 'P2002') return res.status(400).json({ error: 'That already exists' });
